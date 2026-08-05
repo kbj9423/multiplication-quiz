@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>구구단 학습</title>
+<link rel="stylesheet" href="style.css?v=38">
+</head>
+<body>
+<button type="button" class="comments-btn" id="comments-btn" aria-label="댓글">💬<span id="comments-badge" class="badge hidden">0</span></button>
+<div class="app">
+
+  <section id="start-screen" class="screen">
+    <h1 class="title" id="app-title">구구단 학습</h1>
+
+    <div class="section-block">
+      <h2 class="section-title">단 선택</h2>
+      <div class="option-grid table-grid" id="table-grid">
+        <button type="button" class="option-btn" data-table="2">2</button>
+        <button type="button" class="option-btn" data-table="3">3</button>
+        <button type="button" class="option-btn" data-table="4">4</button>
+        <button type="button" class="option-btn" data-table="5">5</button>
+        <button type="button" class="option-btn" data-table="6">6</button>
+        <button type="button" class="option-btn" data-table="7">7</button>
+        <button type="button" class="option-btn" data-table="8">8</button>
+        <button type="button" class="option-btn" data-table="9">9</button>
+        <button type="button" class="option-btn" data-table="master">랜덤</button>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <h2 class="section-title">순서 선택</h2>
+      <div class="option-grid order-grid" id="order-grid">
+        <button type="button" class="option-btn" data-order="sequential">순서대로</button>
+        <button type="button" class="option-btn" data-order="random">랜덤</button>
+        <button type="button" class="option-btn" data-order="reverse">거꾸로</button>
+      </div>
+      <p class="order-note hidden" id="order-note">랜덤 모드는 무작위 순서로 진행됩니다</p>
+    </div>
+
+    <div class="section-block">
+      <h2 class="section-title">모드 선택</h2>
+      <div class="option-grid mode-grid" id="mode-grid">
+        <button type="button" class="option-btn selected" data-mode="text">텍스트</button>
+        <button type="button" class="option-btn" data-mode="voice-auto">음성(자동)</button>
+        <button type="button" class="option-btn" data-mode="voice-button">음성(버튼)</button>
+      </div>
+    </div>
+
+    <button type="button" class="primary-btn" id="start-btn" disabled>시작</button>
+
+    <div class="section-block records-block">
+      <h2 class="section-title">기록 (최근 시간)</h2>
+      <div class="records-table-scroll">
+        <table class="records-table" id="records-table">
+          <thead>
+            <tr>
+              <th>단</th>
+              <th>순서대로</th>
+              <th>랜덤</th>
+              <th>거꾸로</th>
+            </tr>
+          </thead>
+          <tbody id="records-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <label class="verify-toggle">
+      <input type="checkbox" id="verify-mode-checkbox">
+      <span>확인모드</span>
+    </label>
+  </section>
+
+  <section id="quiz-screen" class="screen hidden">
+    <div class="voice-wave hidden" id="voice-wave">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="quiz-question" id="quiz-question">2 × 1 =</div>
+    <div class="answer-area" id="answer-area">
+      <div class="answer-input" id="answer-input">
+        <div class="answer-display" id="answer-display"></div>
+        <div class="keypad" id="answer-keypad">
+          <button type="button" class="ctrl-btn" data-digit="1">1</button>
+          <button type="button" class="ctrl-btn" data-digit="2">2</button>
+          <button type="button" class="ctrl-btn" data-digit="3">3</button>
+          <button type="button" class="ctrl-btn" data-digit="4">4</button>
+          <button type="button" class="ctrl-btn" data-digit="5">5</button>
+          <button type="button" class="ctrl-btn" data-digit="6">6</button>
+          <button type="button" class="ctrl-btn" data-digit="7">7</button>
+          <button type="button" class="ctrl-btn" data-digit="8">8</button>
+          <button type="button" class="ctrl-btn" data-digit="9">9</button>
+          <button type="button" class="ctrl-btn corner-btn" id="answer-clear">지우기</button>
+          <button type="button" class="ctrl-btn" data-digit="0">0</button>
+          <button type="button" class="ctrl-btn corner-btn" id="answer-confirm">확인</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results-screen" class="screen hidden">
+    <h2 class="section-title">결과</h2>
+    <div class="result-time" id="result-time"></div>
+    <div class="result-score" id="result-score"></div>
+    <div class="result-pass hidden" id="result-pass">이 단 통과!</div>
+    <p class="parent-note" id="parent-note">부모님께 보여주세요</p>
+
+    <div class="results-detail-wrap">
+      <table class="results-detail-table" id="results-detail-table">
+        <thead>
+          <tr>
+            <th>문제</th>
+            <th>정답</th>
+            <th>시간</th>
+          </tr>
+        </thead>
+        <tbody id="results-detail-tbody"></tbody>
+      </table>
+    </div>
+
+    <button type="button" class="primary-btn" id="home-btn">홈으로</button>
+  </section>
+
+  <section id="comments-screen" class="screen hidden">
+    <h2 class="section-title">댓글</h2>
+    <div class="pinned-comments hidden" id="pinned-comments"></div>
+    <div class="comments-list" id="comments-list"></div>
+    <p class="comment-status hidden" id="comment-status"></p>
+    <div class="comment-input-row">
+      <input type="text" id="comment-input" class="text-input" placeholder="댓글을 입력하세요" maxlength="100">
+      <button type="button" class="comment-send-btn" id="comment-send-btn">등록</button>
+    </div>
+    <div class="admin-row">
+      <button type="button" class="admin-link" id="admin-login-link">관리자</button>
+      <span class="admin-status hidden" id="admin-status">관리자로 로그인됨</span>
+      <button type="button" class="admin-link hidden" id="admin-logout-btn">로그아웃</button>
+    </div>
+    <button type="button" class="primary-btn" id="comments-back-btn">홈으로</button>
+  </section>
+
+  <div class="overlay hidden" id="verify-overlay">
+    <div class="confirm-box">
+      <p>부모님 확인 코드를 입력하세요</p>
+      <div class="code-display" id="code-display"></div>
+      <div class="keypad" id="keypad">
+        <button type="button" class="ctrl-btn" data-digit="1">1</button>
+        <button type="button" class="ctrl-btn" data-digit="2">2</button>
+        <button type="button" class="ctrl-btn" data-digit="3">3</button>
+        <button type="button" class="ctrl-btn" data-digit="4">4</button>
+        <button type="button" class="ctrl-btn" data-digit="5">5</button>
+        <button type="button" class="ctrl-btn" data-digit="6">6</button>
+        <button type="button" class="ctrl-btn" data-digit="7">7</button>
+        <button type="button" class="ctrl-btn" data-digit="8">8</button>
+        <button type="button" class="ctrl-btn" data-digit="9">9</button>
+        <button type="button" class="ctrl-btn corner-btn" id="code-clear">지우기</button>
+        <button type="button" class="ctrl-btn" data-digit="0">0</button>
+        <button type="button" class="ctrl-btn corner-btn" id="code-confirm">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="reset-confirm-overlay">
+    <div class="confirm-box">
+      <p id="reset-confirm-message">정말 모든 기록을 초기화하시겠습니까?</p>
+      <div class="confirm-actions">
+        <button type="button" class="confirm-btn cancel" id="reset-cancel-btn">취소</button>
+        <button type="button" class="confirm-btn confirm" id="reset-confirm-btn">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="nickname-overlay">
+    <div class="confirm-box">
+      <p>댓글에 사용할 닉네임을 입력해주세요</p>
+      <input type="text" id="nickname-input" class="text-input" placeholder="닉네임" maxlength="100">
+      <p class="comment-status hidden" id="nickname-status"></p>
+      <div class="confirm-actions">
+        <button type="button" class="confirm-btn cancel" id="nickname-cancel-btn">취소</button>
+        <button type="button" class="confirm-btn confirm" id="nickname-confirm-btn">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="admin-login-overlay">
+    <div class="confirm-box">
+      <p>관리자 로그인</p>
+      <input type="text" id="admin-email-input" class="text-input" placeholder="이메일" autocomplete="username">
+      <input type="password" id="admin-password-input" class="text-input" placeholder="비밀번호" autocomplete="current-password">
+      <p class="comment-status hidden" id="admin-login-status"></p>
+      <div class="confirm-actions">
+        <button type="button" class="confirm-btn cancel" id="admin-login-cancel-btn">취소</button>
+        <button type="button" class="confirm-btn confirm" id="admin-login-confirm-btn">로그인</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/constants.js?v=38"></script>
+<script src="js/records.js?v=38"></script>
+<script src="js/quiz.js?v=38"></script>
+<script src="js/main.js?v=38"></script>
+<script type="module" src="js/firebase-comments.js?v=38"></script>
+</body>
+</html>
