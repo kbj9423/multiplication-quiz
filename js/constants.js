@@ -20,8 +20,15 @@ var ORDER_LABELS = {
 var SINO_KOREAN_DIGITS = ['', '일', '이', '삼', '사', '오', '육', '칠', '팔', '구'];
 var SPEECH_RATE = 1;
 var SPEECH_WAVE_DURATION_MS = 900;
-var SPEECH_GAP_MS = 250;
+var SPEECH_GAP_MS = 0;
 var VOICE_DIGIT_SOUNDS = {
   1: 'sound/1.wav',
-  2: 'sound/2.wav'
+  2: 'sound/2.wav',
+  3: 'sound/3.wav',
+  4: 'sound/4.wav',
+  5: 'sound/5.wav',
+  6: 'sound/6.wav',
+  7: 'sound/7.wav',
+  8: 'sound/8.wav',
+  9: 'sound/9.wav'
 };

@@ -259,6 +259,7 @@
     enteredAnswer = '';
     voiceWaveEl.classList.add('hidden');
     clearTimeout(speechTimeoutId);
+    stopDigitAudio();
     if (window.speechSynthesis) {
       window.speechSynthesis.cancel();
     }
@@ -299,11 +300,26 @@
     };
   }
 
+  var currentDigitAudio = null;
+  var digitGapTimeoutId = null;
+
+  function stopDigitAudio() {
+    clearTimeout(digitGapTimeoutId);
+    if (currentDigitAudio) {
+      currentDigitAudio.pause();
+      currentDigitAudio = null;
+    }
+  }
+
   function playRecordedDigit(digit, onEnd) {
     var audio = new Audio(VOICE_DIGIT_SOUNDS[digit]);
+    currentDigitAudio = audio;
     audio.addEventListener('ended', onEnd);
     audio.addEventListener('error', onEnd);
-    audio.play();
+    var playPromise = audio.play();
+    if (playPromise && playPromise.catch) {
+      playPromise.catch(function () {});
+    }
   }
 
   function speakDigit(digit, onEnd) {
@@ -334,13 +350,14 @@
   function speakQuestion(q) {
     voiceWaveEl.classList.remove('hidden');
     clearTimeout(speechTimeoutId);
+    stopDigitAudio();
 
     if (window.speechSynthesis) {
       window.speechSynthesis.cancel();
     }
 
     playDigit(q.a, function () {
-      setTimeout(function () {
+      digitGapTimeoutId = setTimeout(function () {
         playDigit(q.b, function () {});
       }, SPEECH_GAP_MS);
     });
