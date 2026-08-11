@@ -1,5 +1,6 @@
 var QUESTIONS_PER_ROUND = 9;
-var PASS_MS = 20000;
+var PASS_MS_SEQUENTIAL = 20000;
+var PASS_MS_RANDOM = 22000;
 var ANSWER_MAX_DIGITS = 2;
 var SECRET_CODE = '03';
 var TITLE_RESET_CLICK_TARGET = 20;
@@ -19,3 +20,8 @@ var ORDER_LABELS = {
 var SINO_KOREAN_DIGITS = ['', '일', '이', '삼', '사', '오', '육', '칠', '팔', '구'];
 var SPEECH_RATE = 1;
 var SPEECH_WAVE_DURATION_MS = 900;
+var SPEECH_GAP_MS = 250;
+var VOICE_DIGIT_SOUNDS = {
+  1: 'sound/1.wav',
+  2: 'sound/2.wav'
+};

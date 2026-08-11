@@ -22,7 +22,7 @@ function setBestTimeIfBetter(table, order, ms) {
 function isTablePassed(table) {
   var seq = getBestTime(table, 'sequential');
   var random = getBestTime(table, 'random');
-  return seq !== null && seq <= PASS_MS && random !== null && random <= PASS_MS;
+  return seq !== null && seq <= PASS_MS_SEQUENTIAL && random !== null && random <= PASS_MS_RANDOM;
 }
 
 function getVerifyMode() {

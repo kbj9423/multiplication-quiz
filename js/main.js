@@ -107,7 +107,9 @@
           td.className = 'record-na';
         } else {
           td.textContent = formatMs(best);
-          if ((order === 'sequential' || order === 'random') && best <= PASS_MS) {
+          if (order === 'sequential' && best <= PASS_MS_SEQUENTIAL) {
+            td.className = 'record-passed';
+          } else if (order === 'random' && best <= PASS_MS_RANDOM) {
             td.className = 'record-passed';
           }
         }
@@ -297,26 +299,51 @@
     };
   }
 
-  function speakQuestion(q) {
-    voiceWaveEl.classList.remove('hidden');
-    clearTimeout(speechTimeoutId);
+  function playRecordedDigit(digit, onEnd) {
+    var audio = new Audio(VOICE_DIGIT_SOUNDS[digit]);
+    audio.addEventListener('ended', onEnd);
+    audio.addEventListener('error', onEnd);
+    audio.play();
+  }
 
+  function speakDigit(digit, onEnd) {
     if (!window.speechSynthesis) {
-      voiceWaveEl.classList.add('hidden');
+      onEnd();
       return;
     }
-
-    window.speechSynthesis.cancel();
-
-    var text = SINO_KOREAN_DIGITS[q.a] + ',..' + ' ' + SINO_KOREAN_DIGITS[q.b] + ',';
-    var utterance = new SpeechSynthesisUtterance(text);
+    var utterance = new SpeechSynthesisUtterance(SINO_KOREAN_DIGITS[digit] + ',');
     utterance.lang = 'ko-KR';
     utterance.rate = SPEECH_RATE;
     utterance.volume = 1;
     if (selectedVoice) {
       utterance.voice = selectedVoice;
     }
+    utterance.onend = onEnd;
+    utterance.onerror = onEnd;
     window.speechSynthesis.speak(utterance);
+  }
+
+  function playDigit(digit, onEnd) {
+    if (VOICE_DIGIT_SOUNDS[digit]) {
+      playRecordedDigit(digit, onEnd);
+    } else {
+      speakDigit(digit, onEnd);
+    }
+  }
+
+  function speakQuestion(q) {
+    voiceWaveEl.classList.remove('hidden');
+    clearTimeout(speechTimeoutId);
+
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+
+    playDigit(q.a, function () {
+      setTimeout(function () {
+        playDigit(q.b, function () {});
+      }, SPEECH_GAP_MS);
+    });
 
     speechTimeoutId = setTimeout(function () {
       voiceWaveEl.classList.add('hidden');
@@ -392,7 +419,7 @@
     setBestTimeIfBetter(table, order, totalMs);
     saveLastWrongList(table, order, session.wrongList);
 
-    var passed = order === 'sequential' && totalMs <= PASS_MS;
+    var passed = order === 'sequential' && totalMs <= PASS_MS_SEQUENTIAL;
 
     resultTimeEl.textContent = formatMs(totalMs);
     resultScoreEl.textContent = '정답 ' + session.correct + ' / 오답 ' + session.wrong;
