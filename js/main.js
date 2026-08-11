@@ -303,6 +303,14 @@
   var currentDigitAudio = null;
   var digitGapTimeoutId = null;
 
+  var digitAudioCache = {};
+  Object.keys(VOICE_DIGIT_SOUNDS).forEach(function (digit) {
+    var audio = new Audio(VOICE_DIGIT_SOUNDS[digit]);
+    audio.preload = 'auto';
+    audio.load();
+    digitAudioCache[digit] = audio;
+  });
+
   function stopDigitAudio() {
     clearTimeout(digitGapTimeoutId);
     if (currentDigitAudio) {
@@ -312,10 +320,11 @@
   }
 
   function playRecordedDigit(digit, onEnd) {
-    var audio = new Audio(VOICE_DIGIT_SOUNDS[digit]);
+    var audio = digitAudioCache[digit];
+    audio.currentTime = 0;
     currentDigitAudio = audio;
-    audio.addEventListener('ended', onEnd);
-    audio.addEventListener('error', onEnd);
+    audio.onended = onEnd;
+    audio.onerror = onEnd;
     var playPromise = audio.play();
     if (playPromise && playPromise.catch) {
       playPromise.catch(function () {});
